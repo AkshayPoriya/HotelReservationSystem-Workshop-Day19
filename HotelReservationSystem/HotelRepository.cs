@@ -9,41 +9,85 @@ namespace HotelReservationSystem
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Text;
 
     public class HotelRepository
     {
-        public Dictionary<string, double> nameToPriceMapperRegulrCustomer;
+        /// <summary>
+        /// Each key represents hotel name and value stores a container referencing prices for each dayType
+        /// The name to price mapper regulr customer
+        /// </summary>
+        public Dictionary<string, Dictionary<DayType, double>> nameToPriceMapperRegulrCustomer;
 
         public HotelRepository()
         {
-            this.nameToPriceMapperRegulrCustomer = new Dictionary<string, double>();
+            this.nameToPriceMapperRegulrCustomer = new Dictionary<string, Dictionary<DayType, double>>();
         }
 
         /// <summary>
-        /// Returns the Cheapest hotel.
+        /// Gets the cheapest hotel.
         /// </summary>
         /// <param name="startDate">The start date.</param>
         /// <param name="endDate">The end date.</param>
         /// <returns></returns>
-        public Tuple<string, double> GetCheapestHotel(string startDate, string endDate)
+        public List<Tuple<string, double>> GetCheapestHotels(string startDate, string endDate)
         {
             DateTime startDateTime = Convert.ToDateTime(DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
             DateTime endDateTime = Convert.ToDateTime(DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
-            int noOfDays = (int)(endDateTime - startDateTime).TotalDays;
-            string bestHotel = "null";
-            double minPrice = double.MaxValue;
-            foreach(KeyValuePair<string,double> pair in nameToPriceMapperRegulrCustomer)
+            if (startDateTime > endDateTime)
             {
-                double price = noOfDays * pair.Value;
-                if (price <= minPrice)
+                return new List<Tuple<string, double>>();
+            }
+            int weekEnds = GetNumberOfWeekEndsBetweenTwoDates(startDateTime, endDateTime);
+            int weekDays = (endDateTime - startDateTime).Days - weekEnds + 1;
+            Dictionary<string, double> priceList = new Dictionary<string, double>();
+            foreach (KeyValuePair<string, Dictionary<DayType, double>> pair in this.nameToPriceMapperRegulrCustomer)
+            {
+                double priceForWeekDays = pair.Value[DayType.Weekday] * weekDays;
+                double priceForWeekEnds = pair.Value[DayType.Weekend] * weekEnds;
+                double totalPrice = priceForWeekDays + priceForWeekEnds;
+                priceList.Add(pair.Key, totalPrice);
+            }
+            double minPrice = priceList.Values.Min();
+            List<Tuple<string, double>> listOfNameAndPrice = new List<Tuple<string, double>>();
+            foreach(KeyValuePair<string,double> pair in priceList)
+            {
+                if (pair.Value == minPrice)
                 {
-                    bestHotel = pair.Key;
-                    minPrice = price;
+                    listOfNameAndPrice.Add(new Tuple<string, double>(pair.Key, minPrice));
                 }
             }
-            Tuple<string, double> tuple = new Tuple<string, double>(bestHotel, minPrice);
-            return tuple;
+            return listOfNameAndPrice;
         }
+
+        /// <summary>
+        /// Return Numbers of week ends between two dates.
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <param name="endDateTime">The end date time.</param>
+        /// <returns></returns>
+        public int GetNumberOfWeekEndsBetweenTwoDates(DateTime startDateTime, DateTime endDateTime)
+        {
+            int numberOfWeekEnds = 0;
+            if (startDateTime > endDateTime)
+            {
+                return numberOfWeekEnds;
+            }
+            for(DateTime date = startDateTime; date <= endDateTime; date = date.AddDays(1))
+            {
+                if(date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    numberOfWeekEnds++;
+                }
+            }
+            return numberOfWeekEnds;
+        }
+    }
+
+    public enum DayType
+    {
+        Weekday,
+        Weekend
     }
 }
