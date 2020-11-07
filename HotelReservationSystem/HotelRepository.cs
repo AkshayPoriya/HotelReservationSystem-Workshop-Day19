@@ -76,6 +76,42 @@ namespace HotelReservationSystem
         }
 
         /// <summary>
+        /// Returns the best rated hotels.
+        /// </summary>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns></returns>
+        public List<Tuple<string, int, double>> GetBestRatedHotels(string startDate, string endDate)
+        {
+            DateTime startDateTime = Convert.ToDateTime(DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
+            DateTime endDateTime = Convert.ToDateTime(DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
+            if (startDateTime > endDateTime)
+            {
+                return new List<Tuple<string, int, double>>();
+            }
+            int weekEnds = GetNumberOfWeekEndsBetweenTwoDates(startDateTime, endDateTime);
+            int weekDays = (endDateTime - startDateTime).Days - weekEnds + 1;
+            Dictionary<string, double> priceList = new Dictionary<string, double>();
+            foreach (KeyValuePair<string, Dictionary<DayType, double>> pair in this.nameToPriceMapperRegulrCustomer)
+            {
+                double priceForWeekDays = pair.Value[DayType.Weekday] * weekDays;
+                double priceForWeekEnds = pair.Value[DayType.Weekend] * weekEnds;
+                double totalPrice = priceForWeekDays + priceForWeekEnds;
+                priceList.Add(pair.Key, totalPrice);
+            }
+            int bestRating = this.nameToRatingMapper.Values.Max();
+            List<Tuple<string, int, double>> listOfNameAndPrice = new List<Tuple<string, int, double>>();
+            foreach (KeyValuePair<string, int> pair in nameToRatingMapper)
+            {
+                if (pair.Value == bestRating)
+                {
+                    listOfNameAndPrice.Add(new Tuple<string, int, double>(pair.Key, bestRating, priceList[pair.Key]));
+                }
+            }
+            return listOfNameAndPrice;
+        }
+
+        /// <summary>
         /// Return Numbers of week ends between two dates.
         /// </summary>
         /// <param name="startDateTime">The start date time.</param>
