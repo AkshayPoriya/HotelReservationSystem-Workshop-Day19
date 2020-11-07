@@ -31,18 +31,19 @@ namespace HotelReservationSystem
         }
 
         /// <summary>
-        /// Gets the cheapest hotels.
+        /// Gets the cheapest best rated hotels.
+        /// Tuple<string,int,double> is equivalent to Tupel<HotelName,Rating,Price>
         /// </summary>
         /// <param name="startDate">The start date.</param>
         /// <param name="endDate">The end date.</param>
         /// <returns></returns>
-        public List<Tuple<string, double>> GetCheapestHotels(string startDate, string endDate)
+        public List<Tuple<string, int, double>> GetCheapestBestRatedHotels(string startDate, string endDate)
         {
             DateTime startDateTime = Convert.ToDateTime(DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
             DateTime endDateTime = Convert.ToDateTime(DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
             if (startDateTime > endDateTime)
             {
-                return new List<Tuple<string, double>>();
+                return new List<Tuple<string, int, double>>();
             }
             int weekEnds = GetNumberOfWeekEndsBetweenTwoDates(startDateTime, endDateTime);
             int weekDays = (endDateTime - startDateTime).Days - weekEnds + 1;
@@ -55,12 +56,20 @@ namespace HotelReservationSystem
                 priceList.Add(pair.Key, totalPrice);
             }
             double minPrice = priceList.Values.Min();
-            List<Tuple<string, double>> listOfNameAndPrice = new List<Tuple<string, double>>();
-            foreach(KeyValuePair<string,double> pair in priceList)
+            int bestRating = 0;
+            foreach (KeyValuePair<string, double> pair in priceList)
             {
-                if (pair.Value == minPrice)
+                if (pair.Value == minPrice && bestRating <= this.nameToRatingMapper[pair.Key])
                 {
-                    listOfNameAndPrice.Add(new Tuple<string, double>(pair.Key, minPrice));
+                    bestRating = nameToRatingMapper[pair.Key];
+                }
+            }
+            List<Tuple<string, int,  double>> listOfNameAndPrice = new List<Tuple<string, int,  double>>();
+            foreach (KeyValuePair<string, double> pair in priceList)
+            {
+                if (pair.Value == minPrice && nameToRatingMapper[pair.Key] == bestRating)
+                {
+                    listOfNameAndPrice.Add(new Tuple<string, int, double>(pair.Key, bestRating, minPrice));
                 }
             }
             return listOfNameAndPrice;
@@ -72,16 +81,16 @@ namespace HotelReservationSystem
         /// <param name="startDateTime">The start date time.</param>
         /// <param name="endDateTime">The end date time.</param>
         /// <returns></returns>
-        public int GetNumberOfWeekEndsBetweenTwoDates(DateTime startDateTime, DateTime endDateTime)
+        private int GetNumberOfWeekEndsBetweenTwoDates(DateTime startDateTime, DateTime endDateTime)
         {
             int numberOfWeekEnds = 0;
             if (startDateTime > endDateTime)
             {
                 return numberOfWeekEnds;
             }
-            for(DateTime date = startDateTime; date <= endDateTime; date = date.AddDays(1))
+            for (DateTime date = startDateTime; date <= endDateTime; date = date.AddDays(1))
             {
-                if(date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
                 {
                     numberOfWeekEnds++;
                 }

@@ -18,8 +18,7 @@ namespace HotelReservationSystemMSTest
     public class TestHotelRepository
     {
         /// <summary>
-        /// UC3
-        /// Test GetCheapestHotel of HotelRepository Class
+        /// Adds the hotel with name and rate for regular customer.
         /// </summary>
         [TestMethod]
         public void AddHotelWithNameAndRateForRegularCustomer()
@@ -62,22 +61,21 @@ namespace HotelReservationSystemMSTest
         }
 
         /// <summary>
-        /// UC4
+        /// UC6
         /// Returns the cheapest hotel for given date range.
         /// Assert Compare two list objects reference wise, thats why list is converted to string first
         /// </summary>
         [TestMethod]
-        public void ReturnCheapestHotelForGivenDateRange()
+        public void ReturnCheapestHotelWithBestRatingForGivenDateRange()
         {
             // Arrange
             HotelRepository hotelRepository = PopulateHotelRepository();
             // Act
             string startDate = "11/09/2020";
             string endDate = "12/09/2020";
-            List<Tuple<string, double>> actualListOfNameAndPrice = hotelRepository.GetCheapestHotels(startDate, endDate);
-            List<Tuple<string, double>> expectedListOfNameAndPrice = new List<Tuple<string, double>>();
-            expectedListOfNameAndPrice.Add(new Tuple<string, double>("Lakewood", 200));
-            expectedListOfNameAndPrice.Add(new Tuple<string, double>("Bridgewood", 200));
+            List<Tuple<string, int, double>> actualListOfNameAndPrice = hotelRepository.GetCheapestBestRatedHotels(startDate, endDate);
+            List<Tuple<string, int, double>> expectedListOfNameAndPrice = new List<Tuple<string, int, double>>();
+            expectedListOfNameAndPrice.Add(new Tuple<string, int, double>("Bridgewood", 4, 200));
             string actual = ListOfTupleToString(actualListOfNameAndPrice);
             string expected = ListOfTupleToString(expectedListOfNameAndPrice);
             // Assert
@@ -105,12 +103,12 @@ namespace HotelReservationSystemMSTest
             return hotelRepository;
         }
 
-        private string ListOfTupleToString(List<Tuple<string, double>> listOfNameAndPrice)
+        private string ListOfTupleToString(List<Tuple<string, int, double>> listOfNameAndPrice)
         {
             string s = "";
-            foreach(Tuple<string, double> tuple in listOfNameAndPrice)
+            foreach(Tuple<string, int, double> tuple in listOfNameAndPrice)
             {
-                s += (tuple.Item1 + " " + tuple.Item2 + "\n");
+                s += (tuple.Item1 + " " + tuple.Item2 + tuple.Item3 +"\n");
             }
             return s;
         }
