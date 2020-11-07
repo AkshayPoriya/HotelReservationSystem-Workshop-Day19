@@ -26,7 +26,7 @@ namespace HotelReservationSystem
         /// <param name="startDate">The start date.</param>
         /// <param name="endDate">The end date.</param>
         /// <returns></returns>
-        public string GetCheapestHotel(string startDate, string endDate)
+        public Tuple<string, double> GetCheapestHotel(string startDate, string endDate)
         {
             DateTime startDateTime = Convert.ToDateTime(DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
             DateTime endDateTime = Convert.ToDateTime(DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture));
@@ -42,7 +42,8 @@ namespace HotelReservationSystem
                     minPrice = price;
                 }
             }
-            return bestHotel;
+            Tuple<string, double> tuple = new Tuple<string, double>(bestHotel, minPrice);
+            return tuple;
         }
     }
 }

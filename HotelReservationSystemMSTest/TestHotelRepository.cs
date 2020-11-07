@@ -8,6 +8,7 @@ namespace HotelReservationSystemMSTest
 {
     using HotelReservationSystem;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
 
     /// <summary>
     /// 
@@ -55,8 +56,8 @@ namespace HotelReservationSystemMSTest
             // Act
             string startDate = "05/07/2021";
             string endDate = "11/07/2021";
-            string actual = hotelRepository.GetCheapestHotel(startDate, endDate);
-            string expected = "Lakewood";
+            Tuple<string,double> actual = hotelRepository.GetCheapestHotel(startDate, endDate);
+            Tuple<string, double> expected = new Tuple<string, double>("Lakewood", 110 * 6);
             // Assert
             Assert.AreEqual(expected, actual);
         }
