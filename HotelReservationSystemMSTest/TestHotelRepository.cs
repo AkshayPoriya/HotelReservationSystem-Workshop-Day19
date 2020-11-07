@@ -40,7 +40,7 @@ namespace HotelReservationSystemMSTest
         }
 
         /// <summary>
-        /// UC2
+        /// UC4
         /// Returns the cheapest hotel for given date range.
         /// Assert Compare two list objects reference wise, thats why list is converted to string first
         /// </summary>
