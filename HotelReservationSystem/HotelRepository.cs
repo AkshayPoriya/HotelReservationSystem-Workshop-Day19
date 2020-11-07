@@ -20,12 +20,14 @@ namespace HotelReservationSystem
         /// </summary>
         public Dictionary<string, Dictionary<DayType, double>> nameToPriceMapperRegulrCustomer;
 
+        public Dictionary<string, int> nameToRatingMapper;
         /// <summary>
         /// Initializes a new instance of the <see cref="HotelRepository"/> class.
         /// </summary>
         public HotelRepository()
         {
             this.nameToPriceMapperRegulrCustomer = new Dictionary<string, Dictionary<DayType, double>>();
+            this.nameToRatingMapper = new Dictionary<string, int>();
         }
 
         /// <summary>
