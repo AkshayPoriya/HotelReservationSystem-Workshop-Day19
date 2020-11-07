@@ -125,6 +125,27 @@ namespace HotelReservationSystemMSTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// UC9
+        /// Returns the hotels with best rating for given date range for reward customers.
+        /// </summary>
+        [TestMethod]
+        public void ReturnHotelsWithBestRatingForGivenDateRangeForRewardCustomers()
+        {
+            // Arrange
+            HotelRepository hotelRepository = PopulateHotelRepositoryForRewardCustomer();
+            // Act
+            string startDate = "11/09/2020";
+            string endDate = "12/09/2020";
+            List<Tuple<string, int, double>> actualListOfNameAndPrice = hotelRepository.GetBestRatedHotels(startDate, endDate, CustomerType.Reward);
+            List<Tuple<string, int, double>> expectedListOfNameAndPrice = new List<Tuple<string, int, double>>();
+            expectedListOfNameAndPrice.Add(new Tuple<string, int, double>("Ridgewood", 5, 140));
+            string actual = ListOfTupleToString(actualListOfNameAndPrice);
+            string expected = ListOfTupleToString(expectedListOfNameAndPrice);
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+
         private HotelRepository PopulateHotelRepositoryForRegularCustomer()
         {
             HotelRepository hotelRepository = new HotelRepository();
