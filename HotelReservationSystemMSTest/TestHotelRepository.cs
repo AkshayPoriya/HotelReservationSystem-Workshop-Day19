@@ -19,7 +19,7 @@ namespace HotelReservationSystemMSTest
     {
         /// <summary>
         /// UC3
-        /// Test  GetCheapestHotel of HotelRepository Class
+        /// Test GetCheapestHotel of HotelRepository Class
         /// </summary>
         [TestMethod]
         public void AddHotelWithNameAndRateForRegularCustomer()
@@ -33,6 +33,28 @@ namespace HotelReservationSystemMSTest
             double expected2 = 50;
             double actual3 = hotelRepository.nameToPriceMapperRegulrCustomer["Ridgewood"][DayType.Weekend];
             double expected3 = 150;
+            // Assert
+            Assert.AreEqual(expected1, actual1);
+            Assert.AreEqual(expected2, actual2);
+            Assert.AreEqual(expected3, actual3);
+        }
+
+        /// <summary>
+        /// Adds the rating to hotels.
+        /// UC5
+        /// </summary>
+        [TestMethod]
+        public void AddRatingToHotels()
+        {
+            // Arrange
+            HotelRepository hotelRepository = PopulateHotelRepository();
+            // Act
+            int actual1 = hotelRepository.nameToRatingMapper["Lakewood"];
+            int expected1 = 3;
+            int actual2 = hotelRepository.nameToRatingMapper["Bridgewood"];
+            int expected2 = 4;
+            int actual3 = hotelRepository.nameToRatingMapper["Ridgewood"];
+            int expected3 = 5;
             // Assert
             Assert.AreEqual(expected1, actual1);
             Assert.AreEqual(expected2, actual2);
@@ -65,6 +87,9 @@ namespace HotelReservationSystemMSTest
         private HotelRepository PopulateHotelRepository()
         {
             HotelRepository hotelRepository = new HotelRepository();
+            hotelRepository.nameToRatingMapper.Add("Lakewood", 3);
+            hotelRepository.nameToRatingMapper.Add("Bridgewood", 4);
+            hotelRepository.nameToRatingMapper.Add("Ridgewood", 5);
             Dictionary<DayType, double> lakeWood = new Dictionary<DayType, double>();
             lakeWood.Add(DayType.Weekday, 110);
             lakeWood.Add(DayType.Weekend, 90);
