@@ -7,6 +7,7 @@
 namespace HotelReservationSystem
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Program Class Contains Main Function, entry point for the application
