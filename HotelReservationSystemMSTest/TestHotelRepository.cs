@@ -39,5 +39,26 @@ namespace HotelReservationSystemMSTest
             Assert.AreEqual(expected2, actual2);
             Assert.AreEqual(expected3, actual3);
         }
+
+        /// <summary>
+        /// UC2
+        /// Returns the cheapest hotel for given date range.
+        /// </summary>
+        [TestMethod]
+        public void ReturnCheapestHotelForGivenDateRange()
+        {
+            // Arrange
+            HotelRepository hotelRepository = new HotelRepository();
+            hotelRepository.nameToPriceMapperRegulrCustomer.Add("Lakewood", 110);
+            hotelRepository.nameToPriceMapperRegulrCustomer.Add("Bridgewood", 150);
+            hotelRepository.nameToPriceMapperRegulrCustomer.Add("Ridgewood", 220);
+            // Act
+            string startDate = "05/07/2021";
+            string endDate = "11/07/2021";
+            string actual = hotelRepository.GetCheapestHotel(startDate, endDate);
+            string expected = "Lakewood";
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
